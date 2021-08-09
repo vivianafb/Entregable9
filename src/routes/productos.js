@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { urlencoded } from 'express';
 const router = express.Router();
 
 let productos = [
@@ -6,11 +6,14 @@ let productos = [
       id: 1,
       nombre: 'Escuadra',
       precio: 200,
+      foto: 'https://media.istockphoto.com/photos/wooden-ruler-picture-id186824125?s=612x612'
     },
     {
       id: 2,
       nombre: 'Transportador',
       precio: 50,
+      foto: 'https://images.pexels.com/photos/5905610/pexels-photo-5905610.jpeg?cs=srgb&dl=pexels-katerina-holmes-5905610.jpg&fm=jpg'
+
     },
 ];
 class Productos{
@@ -22,11 +25,12 @@ class Productos{
         return productos.find((aProduct) => aProduct.id == id);  
     }
 
-    almacenar(nombre,precio){
+    almacenar(nombre,precio,foto){
         const nuevoProducto = {
             id: productos.length + 1,
             nombre: nombre,
             precio: precio,
+            foto: foto
           };
         
           productos.push(nuevoProducto);
@@ -49,18 +53,34 @@ class Productos{
     }
 }
 
+router.get('/vista', (req, res) => {
+  let array = new Productos();
+  let lista = array.listar(productos);
+  if (!lista) {
+      res.status = 404;
+      return res.json({
+          error: 'No hay productos cargados',
+      });
+  }    
+  res.render('main',{lista})
+});
+
+router.get('/almacenar',(req,res) =>{
+  res.render('tabla',{layout:'guardar'})
+})
+
 router.get('/listar', (req, res) => {
-    let array = new Productos();
-    let lista = array.listar(productos);
-    if (!lista) {
-        res.status = 404;
-        return res.json({
-            error: 'No hay productos cargados',
-        });
-    }    
-    res.json({
-      data: lista,
-    });
+  let array = new Productos();
+  let lista = array.listar(productos);
+  if (!lista) {
+      res.status = 404;
+      return res.json({
+          error: 'No hay productos cargados',
+      });
+  }    
+  res.json({
+    data: lista,
+  });
 });
 
 router.get('/:id', (req, res) => {
@@ -83,14 +103,16 @@ router.get('/:id', (req, res) => {
 
 router.post('/guardar', (req, res) => {
     let array = new Productos();
-    const nombre = req.query.nombre;
-    const precio = req.query.precio;
-    let producto = array.almacenar(nombre,precio);
+    const nombre = req.body.nombre;
+    const precio = req.body.precio;
+    const foto = req.body.foto;
+    let producto = array.almacenar(nombre,precio,foto);
     
   res.status = 201;
-  res.json({
-    data: producto,
-  });
+  res.redirect('/api/productos/vista');
+  // res.json({
+  //   data: producto,
+  // });
 });
 
 router.put('/actualizar/:id', (req, res) => { 
@@ -124,6 +146,7 @@ router.delete('/borrar/:id', (req, res) => {
     res.json({
         producto,
     });
-  });
+});
+
 
 export default router;

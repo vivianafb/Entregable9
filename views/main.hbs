@@ -1,0 +1,30 @@
+<div class="container">
+  <br>
+  <h1 class="text-center">Tabla de Productos</h1>
+  <br>
+<table class="table table-dark table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Nombre</th>
+      <th scope="col">Precio</th>
+      <th scope="col">Foto</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+    {{#each lista}}
+    <tr>
+      <th scope="row">{{id}}</th>
+      <td>{{nombre}}</td>
+      <td>{{precio}}</td>
+      <td><img src="{{foto}}" alt="xd" width="80px" height="70px"></td>
+      {{else}}
+      <br>
+      <h3 style="color: red;">No hay productos</h3><br>
+    </tr>{{/each}}
+  </tbody>
+</table>
+
+<button class="btn btn-link"><a href="/api/productos/almacenar">Ir a Formulario</a></button>
+</div>
